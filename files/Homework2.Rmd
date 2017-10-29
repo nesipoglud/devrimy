@@ -1,0 +1,185 @@
+---
+title: "HATCO Dataset"
+author: "Devrim Nesipoglu - BDA 503 - Fall 2017 - Assignment Two"
+output: html_document
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+```
+
+
+## Multivariate Data Analysis
+
+HATCO provides a simplified set of variables amenable to all of the basic multivariate techniques. It was obtained from the Hair, Anderson, and Tatham Company (HATCO), a large (though nonexistent) industrial supplier. It represents surveys of HATCO customers that were collected through an established marketing research firm.
+
+The dataset consists of 100 observations on 14 separate variables and is an example of a segmentation study for a business-to-business situation, specifically a survey of existing customers of HATCO.
+
+
+## Data Dictionary
+
+Three types of information were collected:
+
+* First is the perception of HATCO on seven attributes identified in past studies.The respondents, purchasing managers of firms buying from HATCO, rated HATCO on each attribute.
+
+* Second are actual purchase outcomes, either the evaluations of each respondent's satisfaction with HATCO.
+
+* Third are general characteristics of the purchasing companies.
+
+Perceptions of HATCO
+
+- X1 Delivery speed -- amount of time it takes to deliver the product once an order has been confirmed
+
+- X2 Price level -- perceived level of price charged by product suppliers
+
+- X3 Price flexibility -- perceived willingness of HATCI representatives to negotiate price
+
+- X4 Manufacturer's image
+
+- X5 Service
+
+- X6 Salesforce's image
+
+- X7 Product quality
+
+Purchase Outcomes: 
+
+- X9 Usage Level : measured on a 100 point percentage scale, ranging from 0 to 100 percent.
+
+- X10 Satisfaction Level 
+
+Purchaser Characteristics
+
+- X8 Size of firm 
+
+- X11 Specification buying
+
+- X12 Structure of procurement
+
+- X13 Type of industry
+
+- X14 Type of buying situation :  This variable has three categories: 1 = new task, 2 = modified rebuy, 3 = straight rebuy
+    
+    
+
+```{r include=TRUE}
+
+#Read the data and omit the first row
+library(readxl)
+HATCO <- read_excel("C:/Users/devrim/Desktop/BDA503/Personal Dataset/HATCO.xlsx")
+View(HATCO)
+```
+
+Examine number of rows, columns
+
+```{r include= TRUE}
+
+#Number of Rows
+nrow(HATCO)
+
+#Number of cols
+nrow(HATCO)
+
+```
+
+
+## Data structure of data
+
+```{r }
+#structure of data
+str(HATCO)
+
+#summary of data
+summary(HATCO$x1)
+
+```
+
+## Data analysis
+
+"Sapply"" is used to analysze more than one vector in this dataset
+
+
+```{r}
+colMeans(HATCO[sapply(HATCO,is.numeric)])
+```
+
+Mean is used for taking average of only one variable.
+
+
+```{r}
+mean(HATCO$x2)
+```
+
+
+Values between second and fifth columns are calculated. Start value is 2.
+
+
+```{r}
+lapply(HATCO[,2:5],mean)
+```
+
+## Data Exploration and Visualization
+
+
+
+- 
+
+
+```{r}
+#Analyzing X1 variable with box plot
+
+boxplot(HATCO$x1)
+
+#X8 Size of firm. It has two catefories, 1 is used for large and 0 is used for small firms.
+#X1 is Delivery speed. According to data, lets look the effect of X1 on X8.
+
+boxplot(HATCO$x1~HATCO$x8,col=rainbow(7))
+
+#Here we can say that delivery speed is of large scale firms are better than small firms. Large firms deliver average time is 2.5 min. For red one is 4 min
+```
+
+Trends of sales in HATCO
+
+```{r}
+library(ggplot2)
+
+# First lets analyze if variable is distributed normal with using ggplot
+
+qqplot(HATCO$x1,HATCO$id)
+
+# Hereby we can see that if we omit first datas, it will be distributed more lineer. Lets sort them.
+
+```
+
+Sorting data to ensure more linear visualization and normal distribution
+
+```{r}
+HATCO$y <- sort(HATCO$x1, decreasing=FALSE)
+HATCO1 <- HATCO[order(HATCO$x1),]
+HATCO2 <- HATCO1[20:100,]
+qqplot(HATCO2$x1,HATCO$id)
+#After sorting data, we have more lineer visualization and normal distribution.
+```
+
+Lets look frequency of data by using plyr and bar plot.
+
+```{r}
+library(plyr)
+barplot(count(HATCO$x8)$freq)
+count(HATCO$x8)$x
+```
+
+
+```{r}
+y <- count(HATCO$x8)
+class(y)
+barplot(y$freq)
+y$x
+
+library(plyr)
+barplot(count(HATCO$x14)$freq, col=rainbow(7))
+barplot(y$freq,names.arg =y$x,main = "Frequency table of company")
+```
+
